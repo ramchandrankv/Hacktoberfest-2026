@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VerdantPulse — Zero-Screen Trail & Foliage Companion (Gemma 2 + TabPFN)</title>
+  <meta name="description" content="Touch Grass: An open-source AI outdoor companion minimizing screen time. Powered by Google Gemma 2 and TabPFN for zero-signal offline foliage forecasting and sensory trail guidance.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%3E<text y=%2226%22 font-size=%2224%22>🍁</text></svg>">
+</head>
+<body>
+  <!-- Ambient background canvas -->
+  <div class="bg-ambient-layer"></div>
+
+  <div class="app-container">
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <a href="#" class="brand" id="brand-link">
+        <div class="brand-icon">🍂</div>
+        <div>
+          <h1 class="brand-title">VerdantPulse</h1>
+        </div>
+        <span class="brand-badge">Touch Grass • Open AI</span>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Live Offline / Online Switch -->
+        <div class="toggle-switch-wrapper" title="Simulate Deep Woods zero-signal mode">
+          <span class="toggle-label">Deep Woods Mode</span>
+          <label class="switch">
+            <input type="checkbox" id="offline-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Network / Inference Status Pill -->
+        <div class="pill-badge" id="network-status-pill">
+          <span class="status-dot" id="network-status-dot"></span>
+          <span id="network-status-text">Online Mode (Localhost / Cloud Fallback)</span>
+        </div>
+
+        <button class="btn-secondary" id="btn-open-settings" title="Settings & Engine Config">
+          ⚙️ Config
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Card -->
+    <section class="hero-card">
+      <img src="assets/hero.jpg" alt="Vibrant Autumn Mountain Trail" class="hero-image-bg">
+      <div class="hero-gradient-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-tag">Hacktoberfest 2026 • Week 1 Challenge</div>
+        <h2 class="hero-title">
+          The 60-Second AI Companion That <span>Gets You Off Your Screen</span>.
+        </h2>
+        <p class="hero-subtitle">
+          No endless maps, no photo-scanning doomscrolling. VerdantPulse forecasts peak fall foliage with 
+          <strong>TabPFN</strong> and synthesizes a sensory <strong>Pocket Field Card</strong> with 
+          <strong>Google Gemma 2</strong>. Then it tells you to lock your phone and touch the living earth.
+        </p>
+      </div>
+    </section>
+
+    <!-- Quick Trail Selector & Controls -->
+    <section class="trail-selector-bar">
+      <div class="input-group">
+        <label for="trail-select" class="input-label">Select Mountain Trail or Ecosystem</label>
+        <select id="trail-select" class="select-custom"></select>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Field Execution</label>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary" id="btn-generate">
+            <span>✨</span> Generate 60s Field Card
+          </button>
+        </div>
+      </div>
+
+      <div class="input-group" style="justify-content: flex-end;">
+        <label class="input-label">Screen Sovereignty</label>
+        <button class="btn-pocket-mode" id="btn-pocket-mode" title="Lock phone screen and start nature presence timer">
+          📴 Slip Into Pocket Mode
+        </button>
+      </div>
+    </section>
+
+    <!-- Audio Player & Soundscape Bar -->
+    <section class="audio-bar-wrapper">
+      <div class="audio-info">
+        <div class="sound-wave-anim paused" id="sound-wave-anim">
+          <div class="sound-wave-bar"></div>
+          <div class="sound-wave-bar"></div>
+          <div class="sound-wave-bar"></div>
+          <div class="sound-wave-bar"></div>
+        </div>
+        <div>
+          <div style="font-weight: 700; font-size: 14.5px; color: #fff;">Hands-Free Audio Companion</div>
+          <div style="font-size: 12px; color: var(--text-secondary);" id="ambient-status-text">
+            Binaural procedural breeze & leaf rustle ready (Web Audio API)
+          </div>
+        </div>
+      </div>
+
+      <div class="audio-controls">
+        <button class="btn-icon" id="btn-toggle-speech" title="Read Field Card Aloud (ElevenLabs / Web Speech)">
+          🔊
+        </button>
+        <button class="btn-icon" id="btn-toggle-ambient" title="Toggle Procedural Forest Soundscape">
+          🍃
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column: TabPFN Phenology & Trail Predictor -->
+      <section class="glass-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon" style="color: var(--accent-gold);">📊</div>
+            <h3 class="card-title">TabPFN Phenology Forecast</h3>
+          </div>
+          <span class="card-tag tag-tabpfn">Tabular Foundation Model</span>
+        </div>
+
+        <!-- Circular Foliage Gauge -->
+        <div class="foliage-meter-box">
+          <div class="gauge-circle-wrap">
+            <svg class="gauge-svg" viewBox="0 0 100 100">
+              <circle class="gauge-bg" cx="50" cy="50" r="45"></circle>
+              <circle class="gauge-fill" id="gauge-fill" cx="50" cy="50" r="45"></circle>
+            </svg>
+            <div class="gauge-text-overlay">
+              <div class="gauge-score" id="gauge-score">92%</div>
+              <div class="gauge-unit">Color Index</div>
+            </div>
+          </div>
+
+          <div class="foliage-summary">
+            <h4 class="foliage-stage-title" id="foliage-stage-title">Spectacular Peak Color</h4>
+            <div class="foliage-color-palette">
+              <span class="color-swatch" id="color-swatch"></span>
+              <span id="color-name">Fiery Crimson & Blaze Scarlet</span>
+            </div>
+            <p class="foliage-desc" id="foliage-desc">
+              Chlorophyll decay has reached maximum threshold for northern hardwoods. Carotenoid and anthocyanin pigments are peaked.
+            </p>
+          </div>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="metrics-row">
+          <div class="metric-pill">
+            <div class="metric-label">Elevation</div>
+            <div class="metric-val" id="metric-elevation">1,463m</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-label">Summit Temp</div>
+            <div class="metric-val" id="metric-temp">5.1°C</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-label">Footing & Mud</div>
+            <div class="metric-val" id="metric-footing">Dry & Firm</div>
+          </div>
+        </div>
+
+        <!-- 7-Day TabPFN Forward Projection -->
+        <div class="forecast-curve-section">
+          <div class="forecast-header">
+            <div class="forecast-title">7-Day Color Progression Curve (In-Context Prior Fit)</div>
+            <span style="font-size: 11px; color: var(--accent-gold); font-weight: 600;">Day 275 - 282</span>
+          </div>
+          <div class="forecast-bars" id="forecast-bars">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Gemma 2 Open-Weight Field Card -->
+      <section class="glass-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon" style="color: #64b5f6;">💎</div>
+            <h3 class="card-title">Gemma 2 Pocket Field Card</h3>
+          </div>
+          <span class="card-tag tag-gemma">Google Open-Weight Model</span>
+        </div>
+
+        <!-- Field Card Output -->
+        <div class="field-card-container">
+          <div class="field-card-text" id="field-card-content">
+            Initializing Gemma 2 Field Intelligence...
+          </div>
+
+          <div class="field-card-footer">
+            <div class="model-telemetry">
+              <span class="model-pill" id="telemetry-model">google/gemma-2-2b-it</span>
+              <span id="telemetry-latency">140ms</span>
+              <span id="telemetry-tokens">118 tok</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);">
+              Edge sovereignty: Zero cloud telemetry
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Why Open Innovation Matters -->
+    <section class="open-source-showcase">
+      <div class="showcase-header">
+        <div class="hero-tag">The Philosophy of Open Innovation</div>
+        <h3 class="showcase-title">Why Open Innovation Makes This Build Possible</h3>
+        <p class="showcase-subtitle">
+          On deep mountain trails, closed-source cloud models fail completely. Here is why open weights and edge foundation models win in the wild:
+        </p>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="comparison-card highlight">
+          <div class="comp-icon">📶</div>
+          <h4 class="comp-title">1. Zero-Signal Trailhead Survival</h4>
+          <p class="comp-desc">
+            National forests, mountain ridges, and river ravines have zero 4G/5G signal. Proprietary cloud APIs throw fatal 503 network errors. Gemma runs 100% locally on your laptop, smartphone, or edge device without a single internet byte.
+          </p>
+        </div>
+
+        <div class="comparison-card">
+          <div class="comp-icon">🛡️</div>
+          <h4 class="comp-title">2. Absolute Location Sovereignty</h4>
+          <p class="comp-desc">
+            Hikers, foragers, and trail runners should never be forced to send their exact GPS coordinates, secret foraging spots, or real-time location pings to centralized corporate ad trackers. Everything stays strictly on-device.
+          </p>
+        </div>
+
+        <div class="comparison-card">
+          <div class="comp-icon">⚡</div>
+          <h4 class="comp-title">3. Zero Marginal Cost & Custom Priors</h4>
+          <p class="comp-desc">
+            No API rate limits, credit cards, or per-token fees. Run 10,000 hikes for $0. TabPFN enables tabular forecasting on small phenology datasets in milliseconds with zero expensive hyperparameter tuning.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nature Immersion Journal Log -->
+    <section class="open-source-showcase nature-journal-section">
+      <div class="showcase-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <h3 class="showcase-title">🌿 "Touch Grass" Offline Immersion Log</h3>
+          <p class="showcase-subtitle">Track minutes spent in the real woods with your phone safely tucked away.</p>
+        </div>
+        <button class="btn-secondary" id="btn-log-grass">
+          + Quick Log 45m Hike
+        </button>
+      </div>
+
+      <div id="journal-log-container" style="margin-top: 20px;">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Pocket Mode Fullscreen Overlay ("Put Phone in Pocket") -->
+  <div class="pocket-mode-overlay" id="pocket-mode-overlay">
+    <div class="pocket-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 20px;">🌲</span>
+        <span style="font-weight: 700; color: #a3c4b1;" id="pocket-trail-name">Franconia Ridge Loop</span>
+      </div>
+      <button class="btn-exit-pocket" id="btn-exit-pocket">Exit Pocket Mode ✕</button>
+    </div>
+
+    <div class="pocket-center-body">
+      <div class="breathing-ring">
+        <div style="font-size: 38px;">🍁</div>
+      </div>
+      <div class="pocket-timer" id="pocket-timer">00:00</div>
+      <h3 class="pocket-mode-title">Phone in Pocket. Eyes on Nature.</h3>
+      <p class="pocket-mode-instruction">
+        Screen is locked to OLED ultra-low power. Audio chimes will gently sound every 15 minutes to ground your senses.
+        Notice the wind, the damp bark, and the sky. Touch the grass.
+      </p>
+    </div>
+
+    <div style="font-size: 12px; color: #42614e;">
+      Running offline on Gemma 2 • Press volume buttons or tap exit when your hike finishes.
+    </div>
+  </div>
+
+  <!-- Settings & Config Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Engine & Inference Configuration</h3>
+        <button class="btn-close" id="btn-close-settings">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="input-group">
+          <label class="input-label" for="select-gemma-variant">Gemma Model Architecture</label>
+          <select id="select-gemma-variant" class="select-custom">
+            <option value="gemma2:2b">Google Gemma 2 2B-IT (Ultra-lightweight edge)</option>
+            <option value="gemma2:9b">Google Gemma 2 9B-IT (High precision naturalist)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="input-ollama-url">Local Ollama Endpoint (Optional)</label>
+          <input type="text" id="input-ollama-url" class="select-custom" placeholder="http://localhost:11434/api/generate">
+          <small style="color: var(--text-muted); font-size: 11px;">
+            Run <code>ollama run gemma2:2b</code> locally. If unreachable, VerdantPulse automatically uses the embedded edge engine.
+          </small>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="input-elevenlabs-key">ElevenLabs API Key (Optional)</label>
+          <input type="password" id="input-elevenlabs-key" class="select-custom" placeholder="sk_...">
+          <small style="color: var(--text-muted); font-size: 11px;">
+            If empty, VerdantPulse uses high-quality offline Web Speech API (zero network calls).
+          </small>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+          <button class="btn-primary" id="btn-save-settings">Save & Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/trails_data.js"></script>
+  <script src="js/tabpfn_predictor.js"></script>
+  <script src="js/gemma_engine.js"></script>
+  <script src="js/audio_companion.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
