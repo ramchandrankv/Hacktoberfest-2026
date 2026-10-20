@@ -1,0 +1,24 @@
+{
+  "name": "hustleforge-ai",
+  "version": "1.0.0",
+  "description": "Autonomous Open-Source AI Co-Pilot for Resellers, Makers & Side-Hustlers (Hacktoberfest 2026 AI Challenge)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "hacktoberfest",
+    "open-source-ai",
+    "gemma",
+    "tabpfn",
+    "elevenlabs",
+    "serpapi",
+    "render",
+    "side-hustle",
+    "reseller",
+    "ecommerce"
+  ],
+  "author": "HustleForge Team",
+  "license": "MIT"
+}

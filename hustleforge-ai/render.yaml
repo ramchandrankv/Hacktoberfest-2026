@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: hustleforge-ai
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: OPEN_MODEL_BACKEND
+        value: local-gemma-tabpfn
+    healthCheckPath: /api/health
+    autoDeploy: true
